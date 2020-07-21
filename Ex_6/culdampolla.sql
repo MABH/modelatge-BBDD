@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-07-2020 a las 14:06:26
+-- Tiempo de generación: 21-07-2020 a las 09:30:11
 -- Versión del servidor: 10.4.13-MariaDB
 -- Versión de PHP: 7.4.7
 
@@ -34,18 +34,35 @@ CREATE TABLE `clients` (
   `Telefon` int(10) NOT NULL,
   `e-mail` varchar(30) NOT NULL,
   `Data_registre` date NOT NULL,
-  `ulleres_id` int(11) NOT NULL,
   `client_nou` tinyint(1) NOT NULL,
   `recomanador_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Volcado de datos para la tabla `clients`
+-- Estructura de tabla para la tabla `cristal_der`
 --
 
-INSERT INTO `clients` (`id_client`, `Nom`, `Codi_Postal`, `Telefon`, `e-mail`, `Data_registre`, `ulleres_id`, `client_nou`, `recomanador_id`) VALUES
-(8, 'Client1', '090909090', 9999999, 'email1@email.com', '2020-07-01', 4, 0, NULL),
-(9, 'Client2', '09090909090', 89789678, 'email1@email.com', '2020-07-01', 3, 1, 8);
+CREATE TABLE `cristal_der` (
+  `id_cristal_der` int(11) NOT NULL,
+  `color` varchar(15) NOT NULL,
+  `graduacio` varchar(15) NOT NULL,
+  `preu` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cristal_izq`
+--
+
+CREATE TABLE `cristal_izq` (
+  `id_cristal_izq` int(11) NOT NULL,
+  `color` varchar(15) NOT NULL,
+  `graduacio` varchar(15) NOT NULL,
+  `preu` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -55,17 +72,34 @@ INSERT INTO `clients` (`id_client`, `Nom`, `Codi_Postal`, `Telefon`, `e-mail`, `
 
 CREATE TABLE `empleat` (
   `id_empleat` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
-  `ulleres_id` int(11) NOT NULL
+  `Nom` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Volcado de datos para la tabla `empleat`
+-- Estructura de tabla para la tabla `factura`
 --
 
-INSERT INTO `empleat` (`id_empleat`, `client_id`, `ulleres_id`) VALUES
-(1, 8, 3),
-(2, 9, 4);
+CREATE TABLE `factura` (
+  `id_factura` int(11) NOT NULL,
+  `usuari_id` int(11) NOT NULL,
+  `ulleres_id` int(11) NOT NULL,
+  `empleat_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `montura`
+--
+
+CREATE TABLE `montura` (
+  `id_montura` int(11) NOT NULL,
+  `color` varchar(15) NOT NULL,
+  `tipo` varchar(15) NOT NULL,
+  `preu` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -88,14 +122,6 @@ CREATE TABLE `proveidor` (
   `NIF` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `proveidor`
---
-
-INSERT INTO `proveidor` (`id_proveidor`, `Nom`, `Carrer`, `Numero`, `Pis`, `Porta`, `Ciutat`, `Codi_Postal`, `Pais`, `Telefon`, `Fax`, `NIF`) VALUES
-(1, 'proveidor1', 'carrer1', 1, '1', '1', 'Ciutat1', 11111111, 'Pais1', 111111111, 111111111, '111111111a'),
-(2, 'Proveidor2', 'Carrer2', 2, '2', '2', 'Ciutat2', 222222222, 'Pais2', 222222222, 222222222, '222222222b');
-
 -- --------------------------------------------------------
 
 --
@@ -105,25 +131,12 @@ INSERT INTO `proveidor` (`id_proveidor`, `Nom`, `Carrer`, `Numero`, `Pis`, `Port
 CREATE TABLE `ulleres` (
   `id_ulleres` int(11) NOT NULL,
   `marca` text NOT NULL,
-  `graduacio_dreta` varchar(5) NOT NULL,
-  `graduacio_esq` varchar(5) NOT NULL,
-  `montura_flotant` tinyint(1) NOT NULL,
-  `montura_metal-lica` tinyint(1) NOT NULL,
-  `montura_pasta` tinyint(1) NOT NULL,
-  `color_montura` text NOT NULL,
-  `color_vidre_esq` text NOT NULL,
-  `color_vidre_dret` text NOT NULL,
-  `preu` int(11) NOT NULL,
-  `proveidor_id` int(11) NOT NULL
+  `preu_total` int(11) NOT NULL,
+  `proveidor_id` int(11) NOT NULL,
+  `cristal_der_id` int(11) NOT NULL,
+  `cristal_izq_id` int(11) NOT NULL,
+  `montura_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `ulleres`
---
-
-INSERT INTO `ulleres` (`id_ulleres`, `marca`, `graduacio_dreta`, `graduacio_esq`, `montura_flotant`, `montura_metal-lica`, `montura_pasta`, `color_montura`, `color_vidre_esq`, `color_vidre_dret`, `preu`, `proveidor_id`) VALUES
-(3, 'Ulleres1', '3', '1', 1, 0, 0, 'negre', 'vermell', 'blau', 1, 2),
-(4, 'marc2', '1', '4', 0, 0, 1, 'GRIs', 'blanc', 'negre', 2, 1);
 
 --
 -- Índices para tablas volcadas
@@ -135,17 +148,45 @@ INSERT INTO `ulleres` (`id_ulleres`, `marca`, `graduacio_dreta`, `graduacio_esq`
 ALTER TABLE `clients`
   ADD PRIMARY KEY (`id_client`),
   ADD KEY `id_client` (`id_client`),
-  ADD KEY `ulleres_id` (`ulleres_id`),
   ADD KEY `recomanador_id` (`recomanador_id`);
+
+--
+-- Indices de la tabla `cristal_der`
+--
+ALTER TABLE `cristal_der`
+  ADD PRIMARY KEY (`id_cristal_der`),
+  ADD KEY `id_cristal_der` (`id_cristal_der`);
+
+--
+-- Indices de la tabla `cristal_izq`
+--
+ALTER TABLE `cristal_izq`
+  ADD PRIMARY KEY (`id_cristal_izq`),
+  ADD KEY `id_cristal_izq` (`id_cristal_izq`);
 
 --
 -- Indices de la tabla `empleat`
 --
 ALTER TABLE `empleat`
   ADD PRIMARY KEY (`id_empleat`),
-  ADD KEY `id_empleat` (`id_empleat`),
-  ADD KEY `client_id` (`client_id`),
-  ADD KEY `ulleres_id` (`ulleres_id`);
+  ADD KEY `id_empleat` (`id_empleat`);
+
+--
+-- Indices de la tabla `factura`
+--
+ALTER TABLE `factura`
+  ADD PRIMARY KEY (`id_factura`),
+  ADD KEY `id_factura` (`id_factura`),
+  ADD KEY `usuari_id` (`usuari_id`),
+  ADD KEY `ulleres_id` (`ulleres_id`),
+  ADD KEY `empleat_id` (`empleat_id`);
+
+--
+-- Indices de la tabla `montura`
+--
+ALTER TABLE `montura`
+  ADD PRIMARY KEY (`id_montura`),
+  ADD KEY `id_montura` (`id_montura`);
 
 --
 -- Indices de la tabla `proveidor`
@@ -160,7 +201,10 @@ ALTER TABLE `proveidor`
 ALTER TABLE `ulleres`
   ADD PRIMARY KEY (`id_ulleres`),
   ADD KEY `id_ulleres` (`id_ulleres`),
-  ADD KEY `proveidor_id` (`proveidor_id`);
+  ADD KEY `proveidor_id` (`proveidor_id`),
+  ADD KEY `cristal_der_id` (`cristal_der_id`),
+  ADD KEY `cristal_izq_id` (`cristal_izq_id`),
+  ADD KEY `montura_id` (`montura_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -173,10 +217,34 @@ ALTER TABLE `clients`
   MODIFY `id_client` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT de la tabla `cristal_der`
+--
+ALTER TABLE `cristal_der`
+  MODIFY `id_cristal_der` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `cristal_izq`
+--
+ALTER TABLE `cristal_izq`
+  MODIFY `id_cristal_izq` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `empleat`
 --
 ALTER TABLE `empleat`
   MODIFY `id_empleat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `factura`
+--
+ALTER TABLE `factura`
+  MODIFY `id_factura` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `montura`
+--
+ALTER TABLE `montura`
+  MODIFY `id_montura` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `proveidor`
@@ -198,21 +266,29 @@ ALTER TABLE `ulleres`
 -- Filtros para la tabla `clients`
 --
 ALTER TABLE `clients`
-  ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`ulleres_id`) REFERENCES `ulleres` (`id_ulleres`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `clients_ibfk_2` FOREIGN KEY (`recomanador_id`) REFERENCES `clients` (`id_client`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`recomanador_id`) REFERENCES `clients` (`id_client`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `empleat`
+-- Filtros para la tabla `cristal_der`
 --
-ALTER TABLE `empleat`
-  ADD CONSTRAINT `empleat_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id_client`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `empleat_ibfk_2` FOREIGN KEY (`ulleres_id`) REFERENCES `ulleres` (`id_ulleres`) ON UPDATE CASCADE;
+ALTER TABLE `cristal_der`
+  ADD CONSTRAINT `cristal_der_ibfk_1` FOREIGN KEY (`id_cristal_der`) REFERENCES `ulleres` (`cristal_der_id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `factura`
+--
+ALTER TABLE `factura`
+  ADD CONSTRAINT `factura_ibfk_1` FOREIGN KEY (`usuari_id`) REFERENCES `clients` (`id_client`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `factura_ibfk_2` FOREIGN KEY (`empleat_id`) REFERENCES `empleat` (`id_empleat`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `factura_ibfk_3` FOREIGN KEY (`ulleres_id`) REFERENCES `ulleres` (`id_ulleres`) ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `ulleres`
 --
 ALTER TABLE `ulleres`
-  ADD CONSTRAINT `ulleres_ibfk_1` FOREIGN KEY (`proveidor_id`) REFERENCES `proveidor` (`id_proveidor`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `ulleres_ibfk_1` FOREIGN KEY (`proveidor_id`) REFERENCES `proveidor` (`id_proveidor`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `ulleres_ibfk_2` FOREIGN KEY (`montura_id`) REFERENCES `montura` (`id_montura`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `ulleres_ibfk_3` FOREIGN KEY (`cristal_izq_id`) REFERENCES `cristal_izq` (`id_cristal_izq`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
